@@ -24,7 +24,7 @@ int bytetoint(unsigned char *bytes,int length)
 }
 int main()
 {
-	unsigned char tempbytes[4]={0};//for testing
+	unsigned char tempbytes[4]={0};
 	FILE* fp = fopen("0083.bmp","rb");
 	int filesize=0;
 	if(fp == NULL)
