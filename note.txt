@@ -1,1 +1,5 @@
-when youreadd the image add itslink for copy right or smth
+//this is a personal note
+* optimize and remove testing stuff
+* add the ability to resize(2functions for each axis?)(as one dimension is likely to be larger that the other)
+* to convert an image to bitmap use:
+[image]magick image.png -type truecolor image.bmp 
