@@ -24,26 +24,19 @@ int bytetoint(unsigned char *bytes,int length)
 }
 void getpixel(unsigned char *buffer,int firstpixel,int width,int height,int x,int y)
 {
-	//y = height - y;//optimisable?
+	y = height - (y + 1);//optimisable?
+	printf("%d\n",y);
 	int rowsize=width+(4-width%4);//some magick because rows are padded
+	if (!(width%4))rowsize-=4;
 	//pixels start from the bottom left or smth
 	int bytetoread = (3 * ((rowsize * y)+x))+firstpixel;
-	printf("B: %d\n",buffer[bytetoread-6]);
-	//for(;y>0;y--)
-	//{
-	//for(x=0;x<width;x++)
-	//{
-	//	bytetoread = (3*((rowsize * y)+x))+firstpixel;
-		//printf("index:\t\t%d\n",bytetoread-6);//?
-        //	printf("\033[48;2;%d;%d;%dm  \033[0m",buffer[bytetoread-4],buffer[bytetoread-5],buffer[bytetoread-6]);
-		//printf("X: %d, Y: %d",x,y);
-	//}printf("\n");
-	//}
+	printf("%d\n",bytetoread);
+	printf("R: %d, G: %d, B: %d\n",buffer[bytetoread-4],buffer[bytetoread-5],buffer[bytetoread-6]);
 }
 int main()
 {
 	unsigned char tempbytes[4]={0};
-	FILE* fp = fopen("0083.bmp","rb");
+	FILE* fp = fopen("cup.bmp","rb");
 	int filesize=0;
 	if(fp == NULL)
 	{
@@ -69,7 +62,7 @@ int main()
 	strncpy(tempbytes,buffer+16,4);//the height of the image
 	int height = bytetoint(tempbytes,4);
 	//printf("filesize:\t%d\n",filesize);//?
-	getpixel(buffer,firstpixel,width,height,1,2);//-6 here? can i mix the first 2 arguments then add -6?
+	getpixel(buffer,firstpixel,width,height,280,124);//-6 here? can i mix the first 2 arguments then add -6?
 
 	free(buffer);
 	buffer = NULL;
