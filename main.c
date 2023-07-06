@@ -28,12 +28,15 @@ void getpixel(unsigned char *buffer,int firstpixel,int width,int height,int x,in
 	int rowsize=width+(width%4);//some magick because rows are padded
 	//pixels start from the bottom left or smth
 	int bytetoread = (3 * ((rowsize * y)+x))+firstpixel;
-	for(int i=0;i<rowsize*height;i++)
+	for(;y>0;y--)
 	{
-	bytetoread = (3*i)+firstpixel;
-	//printf("index:\t\t%d\n",bytetoread-6);//?
-	printf("\033[48;2;%d;%d;%dm  \033[0m",buffer[bytetoread-4],buffer[bytetoread-5],buffer[bytetoread-6]);
-	if(!(i%rowsize))printf("\n");
+	for(x=0;x<width;x++)
+	{
+		bytetoread = (3*((rowsize * y)+x))+firstpixel;
+		//printf("index:\t\t%d\n",bytetoread-6);//?
+		printf("\033[48;2;%d;%d;%dm  \033[0m",buffer[bytetoread-4],buffer[bytetoread-5],buffer[bytetoread-6]);
+		//printf("X: %d, Y: %d",x,y);
+	}printf("\n");
 	}
 }
 int main()
