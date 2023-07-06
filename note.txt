@@ -1,0 +1,2 @@
+remove testing shit
+then remove stupid files(if any) then commit
