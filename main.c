@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+typedef struct color{
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+} color;
 //gets 256^x
 int getprefix(int power)
 {
@@ -22,30 +28,42 @@ int bytetoint(unsigned char *bytes,int length)
 	}
 	return res;
 }
-void getpixel(unsigned char *buffer,int firstpixel,int width,int height,int x,int y)
+color getpixel(unsigned char *buffer,int firstpixel,int width,int height,int x,int y,char *is_scanned)
 {
-	y = height - (y + 1);//optimisable?
-	printf("%d\n",y);
-	int rowsize=width+(4-width%4);//some magick because rows are padded
-	if (!(width%4))rowsize-=4;
+	//*is_scanned=0;
+	color res;
+	//add error checking later?
 	//pixels start from the bottom left or smth
+	y = height - (y + 1);
+	int rowsize = (width%4) ? width+(4-width%4) : width;//some magick because rows are padded
 	int bytetoread = (3 * ((rowsize * y)+x))+firstpixel;
-	printf("%d\n",bytetoread);
-	printf("R: %d, G: %d, B: %d\n",buffer[bytetoread-4],buffer[bytetoread-5],buffer[bytetoread-6]);
+	res.r = buffer[bytetoread+2];
+	res.g = buffer[bytetoread+1];
+	res.b = buffer[bytetoread];
+
+	*is_scanned = 1;
+	return res;
 }
 int main()
 {
 	unsigned char tempbytes[4]={0};
+	char temp[16]={0};//
 	FILE* fp = fopen("cup.bmp","rb");
 	int filesize=0;
 	if(fp == NULL)
 	{
-		fprintf(stderr,"cannot open file");
+		fprintf(stderr,"cannot open file.\n");
 		return -1;
 	}
 	unsigned char headbuffer[6]={0};
 
 	fread(headbuffer,sizeof(headbuffer[0]),6,fp);
+	if(headbuffer[0]!='B'&&headbuffer[1]!='M')
+	{
+		fprintf(stderr,"invalid file format.\n");
+		fclose(fp);
+		return -1;
+	}
 	strncpy(tempbytes,headbuffer+2,4);//skips the first 2 bytes then reads 4 bytes from buffer then puts them into "a"
 	filesize = bytetoint(tempbytes,4);
 	unsigned char *buffer = malloc(sizeof(char) * filesize);
@@ -53,16 +71,15 @@ int main()
 	//from here the code "byte_addres=byte_addres-6"
 
 	strncpy(tempbytes,buffer+4,4);
-	int firstpixel = bytetoint(tempbytes,4);
+	int firstpixel = bytetoint(tempbytes,4)-6;
 	//the starting address of the pixels
-	//should i add "-6" at the end?
-	//can i optimise this mess?
 	strncpy(tempbytes,buffer+12,4);//the width of the image
 	int width = bytetoint(tempbytes,4);
 	strncpy(tempbytes,buffer+16,4);//the height of the image
 	int height = bytetoint(tempbytes,4);
-	//printf("filesize:\t%d\n",filesize);//?
-	getpixel(buffer,firstpixel,width,height,280,124);//-6 here? can i mix the first 2 arguments then add -6?
+
+	color test = getpixel(buffer,firstpixel,width,height,20,104,&temp[8]);
+	printf("%d %d %d %d\n",test.r,test.g,test.b,temp[8]);
 
 	free(buffer);
 	buffer = NULL;
