@@ -44,11 +44,61 @@ color getpixel(unsigned char *buffer,int firstpixel,int width,int height,int x,i
 	*is_scanned = 1;
 	return res;
 }
+//combines multiple pixels into a rectangle
+void rectprint(char is_large,int width,int height)
+{
+	//getting the bounderies
+	//why do i feel that it is unnecessarily complicated
+	width -=1;
+	height -=1;
+	int baseborder = (is_large) ? 175 : 79;
+	int maxX,maxY;
+	//can be simplified..right?
+	if (width <= baseborder  && height <= baseborder)
+	{
+		maxX=width;
+		maxY=height;
+	}
+	else
+	{
+		if (width > baseborder ^ height > baseborder)//XOR
+		{
+			int baseborderX = (width>baseborder) ? baseborder : width;
+			int baseborderY = (height>baseborder) ? baseborder : height;
+		
+			if (width>=height)
+			{
+				maxX = baseborderX;
+				maxY = (int)(baseborderY*height/width);
+			}
+			else
+			{
+				maxX = (int)(baseborderX*width/height);
+				maxY = baseborderY;
+			}
+		}
+		else
+		{
+			if (width>=height)
+			{
+				maxX = baseborder;
+				maxY = (int)(baseborder*height/width);
+			}
+			else
+			{
+				maxX = (int)(baseborder*width/height);
+				maxY = baseborder;
+			}
+		}
+	}
+	printf("%d, %d\n",maxX,maxY);
+}
 int main()
 {
+	char is_large=0;//canvas size
 	unsigned char tempbytes[4]={0};
 	char temp[16]={0};//
-	FILE* fp = fopen("cup.bmp","rb");
+	FILE* fp = fopen("test2.bmp","rb");
 	int filesize=0;
 	if(fp == NULL)
 	{
@@ -78,8 +128,9 @@ int main()
 	strncpy(tempbytes,buffer+16,4);//the height of the image
 	int height = bytetoint(tempbytes,4);
 
-	color test = getpixel(buffer,firstpixel,width,height,20,104,&temp[8]);
-	printf("%d %d %d %d\n",test.r,test.g,test.b,temp[8]);
+	//color test = getpixel(buffer,firstpixel,width,height,20,104,&temp[8]);
+	//printf("%d %d %d %d\n",test.r,test.g,test.b,temp[8]);
+	rectprint(is_large,width,height);
 
 	free(buffer);
 	buffer = NULL;
