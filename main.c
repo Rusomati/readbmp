@@ -48,10 +48,10 @@ color getpixel(unsigned char *buffer,int firstpixel,int width,int height,int x,i
 	*is_scanned = 1;
 	return res;
 }
-//combines multiple pixels into a rectangle
+//gets the bounderies as that makes mapping a bigger image to a smaller image easier
+//and it has other uses for later
 point getbounds(char is_large,int width,int height)
 {
-	//getting the bounderies
 	point bounds;
 	width -=1;
 	height -=1;
@@ -83,7 +83,7 @@ int main()
 {
 	char is_large=0;//canvas size
 	unsigned char tempbytes[4]={0};
-	char temp[16]={0};//
+	//char temp[16]={0};//
 	FILE* fp = fopen("test2.bmp","rb");
 	int filesize=0;
 	if(fp == NULL)
