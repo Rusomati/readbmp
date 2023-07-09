@@ -7,6 +7,10 @@ typedef struct color{
 	unsigned char g;
 	unsigned char b;
 } color;
+typedef struct point{
+	int x;
+	int y;
+}point;
 //gets 256^x
 int getprefix(int power)
 {
@@ -45,53 +49,35 @@ color getpixel(unsigned char *buffer,int firstpixel,int width,int height,int x,i
 	return res;
 }
 //combines multiple pixels into a rectangle
-void rectprint(char is_large,int width,int height)
+point getbounds(char is_large,int width,int height)
 {
 	//getting the bounderies
-	//why do i feel that it is unnecessarily complicated
+	point bounds;
 	width -=1;
 	height -=1;
 	int baseborder = (is_large) ? 175 : 79;
-	int maxX,maxY;
-	//can be simplified..right?
 	if (width <= baseborder  && height <= baseborder)
 	{
-		maxX=width;
-		maxY=height;
+		bounds.x=width;
+		bounds.y=height;
 	}
 	else
 	{
-		if (width > baseborder ^ height > baseborder)//XOR
-		{
-			int baseborderX = (width>baseborder) ? baseborder : width;
-			int baseborderY = (height>baseborder) ? baseborder : height;
+		int baseborderX = (width>baseborder) ? baseborder : width;
+		int baseborderY = (height>baseborder) ? baseborder : height;
 		
-			if (width>=height)
-			{
-				maxX = baseborderX;
-				maxY = (int)(baseborderY*height/width);
-			}
-			else
-			{
-				maxX = (int)(baseborderX*width/height);
-				maxY = baseborderY;
-			}
+		if (width>=height)
+		{
+			bounds.x = baseborderX;
+			bounds.y = (int)(baseborderY*height/width);
 		}
 		else
 		{
-			if (width>=height)
-			{
-				maxX = baseborder;
-				maxY = (int)(baseborder*height/width);
-			}
-			else
-			{
-				maxX = (int)(baseborder*width/height);
-				maxY = baseborder;
-			}
+			bounds.x = (int)(baseborderX*width/height);
+			bounds.y = baseborderY;
 		}
 	}
-	printf("%d, %d\n",maxX,maxY);
+	return bounds;
 }
 int main()
 {
@@ -130,7 +116,8 @@ int main()
 
 	//color test = getpixel(buffer,firstpixel,width,height,20,104,&temp[8]);
 	//printf("%d %d %d %d\n",test.r,test.g,test.b,temp[8]);
-	rectprint(is_large,width,height);
+	point bounds = getbounds(is_large,width,height);
+	printf("%d %d\n",bounds.x,bounds.y);
 
 	free(buffer);
 	buffer = NULL;
