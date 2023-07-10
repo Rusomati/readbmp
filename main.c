@@ -79,12 +79,30 @@ point getbounds(char is_large,int width,int height)
 	}
 	return bounds;
 }
+void draw(unsigned char *buffer,int firstpixel,int width,int height,char is_large)
+{
+	point bounds = getbounds(is_large,width,height);
+	color pixel;
+	char is_scanned;
+	for (int x1=0,y1=0,x2,y2;y1<=bounds.y;y1++)
+	{
+		y2 = (int)(height*y1/bounds.y);
+		for(x1=0;x1<=bounds.x;x1++)
+		{
+			x2 = (int)(width*x1/bounds.x);
+			pixel = getpixel(buffer,firstpixel,width,height,x2,(height-1)-y2,&is_scanned);
+			printf("draw color %d %d %d 255 0 0\n",pixel.r,pixel.g,pixel.b);
+			printf("draw rect %d %d 1 1 0 0\n",x1,y1);
+			if(!((y1*bounds.x+x1)%20)) printf("drawflush display1\n");
+		}
+	}
+}
 int main()
 {
 	char is_large=0;//canvas size
 	unsigned char tempbytes[4]={0};
 	//char temp[16]={0};//
-	FILE* fp = fopen("test2.bmp","rb");
+	FILE* fp = fopen("cup.bmp","rb");
 	int filesize=0;
 	if(fp == NULL)
 	{
@@ -108,7 +126,7 @@ int main()
 
 	strncpy(tempbytes,buffer+4,4);
 	int firstpixel = bytetoint(tempbytes,4)-6;
-	//the starting address of the pixels
+	//the starting address of the pixels ^
 	strncpy(tempbytes,buffer+12,4);//the width of the image
 	int width = bytetoint(tempbytes,4);
 	strncpy(tempbytes,buffer+16,4);//the height of the image
@@ -116,8 +134,11 @@ int main()
 
 	//color test = getpixel(buffer,firstpixel,width,height,20,104,&temp[8]);
 	//printf("%d %d %d %d\n",test.r,test.g,test.b,temp[8]);
-	point bounds = getbounds(is_large,width,height);
-	printf("%d %d\n",bounds.x,bounds.y);
+	
+	//point bounds = getbounds(is_large,width,height);
+	//printf("%d %d\n",bounds.x,bounds.y);
+	
+	draw(buffer,firstpixel,width,height,is_large);
 
 	free(buffer);
 	buffer = NULL;

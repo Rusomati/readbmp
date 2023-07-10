@@ -1,0 +1,10 @@
+#!/bin/bash
+./a.out > /tmp/piclogic.txt
+a=2000;
+cat /tmp/piclogic.txt|head -n 1000|xclip -selection clipboard;
+while :
+do
+	read -p "press enter to continue";
+	cat /tmp/piclogic.txt |head -n $a|tail -n 1000|xclip -selection clipboard;
+	((a+=1000));
+done
